@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Nueva Publicación";
+}
+
+<div class="page-center-wrapper">
+    <div class="post-card-create">
+        <div class="text-center mb-4">
+            <h2 class="create-title mb-1">Nueva Publicación</h2>
+            <p style="color: #64748b; font-size: 0.9rem;">Compartí algo nuevo con la comunidad</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-danger-custom mb-4">
+                ⚠️ @ViewBag.Error
+            </div>
+        }
+
+        <form action="@Url.Action("GuardarPublicacion", "Home")" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label-custom">Título</label>
+                <input type="text" name="titulo" class="input-neon-custom" placeholder="¿De qué trata tu publicación?" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label-custom">Descripción</label>
+                <textarea name="descripcion" class="input-neon-custom" rows="4" placeholder="Escribí los detalles acá..." required></textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label-custom">Subir Imagen desde la compu (opcional)</label>
+                <input type="file" name="archivoImagen" class="input-neon-custom" accept="image/*" />
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center gap-3 pt-2">
+                <a href="@Url.Action("Index", "Home")" class="btn-outline-glow-red flex-grow-1">Cancelar</a>
+                <button type="submit" class="btn-gradient-green flex-grow-1">Publicar</button>
+            </div>
+        </form>
+    </div>
+</div>

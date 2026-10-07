@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="page-center-wrapper">
+    <div class="login-card">
+        <div class="text-center mb-4">
+            <h2 class="login-title mb-1">¡Hola de nuevo!</h2>
+            <p style="color: #64748b; font-size: 0.9rem;">Ingresá tus credenciales para continuar</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-danger-custom mb-4">
+                ⚠️ @ViewBag.Error
+            </div>
+        }
+
+        <form action="@Url.Action("ProcesarLogin", "Home")" method="post">
+            <div class="mb-3">
+                <label class="form-label-custom">Usuario</label>
+                <input type="text" name="nombreUsuario" class="input-neon-custom" placeholder="Tu nombre de usuario" required />
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label-custom">Contraseña</label>
+                <input type="password" name="contrasena" class="input-neon-custom" placeholder="••••••••" required />
+            </div>
+
+            <button type="submit" class="btn-gradient-purple">Ingresar</button>
+        </form>
+
+        <div class="mt-4 text-center">
+            <p class="mb-0" style="color: #94a3b8; font-size: 0.9rem;">
+                ¿No tenés cuenta? 
+                <a href="@Url.Action("Registrarse", "Home")" class="register-link">Registrate acá</a>
+            </p>
+        </div>
+    </div>
+</div>

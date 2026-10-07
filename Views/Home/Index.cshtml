@@ -1,0 +1,123 @@
+﻿@using Microsoft.AspNetCore.Http
+@model List<TP07.Models.Publicaciones>
+
+@{
+    ViewData["Title"] = "Muro Principal";
+
+    int? idUsuarioLogueado = Context.Session.GetInt32("IdUsuario");
+    string usuarioLogueado = Context.Session.GetString("UsuarioLogueado");
+    string nombreCompleto = Context.Session.GetString("NombreCompleto");
+
+    if (string.IsNullOrEmpty(usuarioLogueado))
+    {
+        Context.Response.Redirect(Url.Action("Registrarse", "Home"));
+    }
+}
+
+<div class="container pt-3 pb-5 feed-container">
+    <div class="hero-header d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="user-avatar-badge">
+                @(string.IsNullOrEmpty(nombreCompleto) ? "U" : nombreCompleto.Substring(0, 1).ToUpper())
+            </div>
+            <div>
+                <h2 class="h5 mb-0 fw-bold text-white">@nombreCompleto</h2>
+                <span style="font-size: 0.85rem; color: #94a3b8;">@@usuarioLogueado</span>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("CrearPublicacion", "Home")" class="btn btn-gradient-green">+ Publicar</a>
+            <a href="@Url.Action("Logout", "Home")" class="btn btn-outline-glow-red">Salir</a>
+        </div>
+    </div>
+
+    <div class="d-flex flex-column gap-4" id="contenedor-publicaciones">
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (var pub in Model)
+            {
+                bool yaDioLike = idUsuarioLogueado.HasValue && BD.UsuarioDioMeGusta(pub.Id, idUsuarioLogueado.Value);
+                int cantidadLikes = BD.ObtenerCantidadLikes(pub.Id);
+                var listaComentarios = BD.ObtenerComentariosConUsuario(pub.Id);
+                string nombreAutor = BD.ObtenerNombreUsuario(pub.IdUsuario);
+
+                <div class="post-card">
+                    @if (!string.IsNullOrEmpty(pub.Imagen))
+                    {
+                        <div class="post-media-frame">
+                            <img src="@pub.Imagen" alt="Publicación">
+                        </div>
+                    }
+
+                    <div class="post-content">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h3 class="post-title mb-0">@pub.Titulo</h3>
+                        </div>
+
+                        <p class="post-text mb-3">@pub.Descripcion</p>
+
+                        <div class="mb-4">
+                            <span class="post-author-chip">
+                                <span>👤 @(string.IsNullOrEmpty(nombreAutor) ? "Usuario Desconocido" : nombreAutor)</span>
+                                <span>•</span>
+                                <span>🕒 @pub.FechaPublicacion.ToString("dd MMM, HH:mm")</span>
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-3 mb-4 pb-2 border-bottom border-secondary border-opacity-25">
+                            <button id="btn-like-@pub.Id" 
+                                    class="btn-like-neon @(yaDioLike ? "active" : "")" 
+                                    onclick="darOQuitarLike(@pub.Id)">
+                                ❤ <span>Me Gusta</span>
+                            </button>
+                            <span id="likes-@pub.Id" class="fw-semibold" style="color: #cbd5e1; font-size: 0.9rem;">
+                                @cantidadLikes Me Gusta
+                            </span>
+                        </div>
+
+                        <div class="comments-wrapper">
+                            <h6 class="text-white fw-bold mb-3" style="font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; color: #94a3b8;">
+                                Conversación
+                            </h6>
+
+                            <div id="comentarios-@pub.Id" class="d-flex flex-column gap-2 mb-3">
+                                @if (listaComentarios != null && listaComentarios.Count > 0)
+                                {
+                                    foreach (var com in listaComentarios)
+                                    {
+                                        <div class="comment-bubble">
+                                            <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                                <span class="comment-user">@com.NombreUsuario</span>
+                                                <span style="font-size: 0.7rem; color: #64748b;">
+                                                    @Convert.ToDateTime(com.FechaComentario).ToString("dd/MM HH:mm")
+                                                </span>
+                                            </div>
+                                            <div class="comment-text">@com.Texto</div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+
+                            <div class="input-group">
+                                <input type="text" id="input-comentario-@pub.Id" class="form-control input-neon" placeholder="Escribe tu respuesta..." />
+                                <button class="btn btn-glow-purple" onclick="comentar(@pub.Id)">Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5 hero-header">
+                <p class="mb-0" style="color: #94a3b8;">No hay publicaciones en el muro todavía. ¡Sé el primero en publicar!</p>
+            </div>
+        }
+    </div>
+
+    <div class="text-center my-5">
+        <button id="btnVerMas" class="btn btn-outline-glow-red px-4" onclick="cargarMasPublicaciones()">
+            Cargar más publicaciones
+        </button>
+    </div>
+</div>

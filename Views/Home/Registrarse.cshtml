@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<div class="page-center-wrapper">
+    <div class="register-card">
+        <div class="text-center mb-4">
+            <h2 class="register-title mb-1">Crear Cuenta</h2>
+            <p style="color: #64748b; font-size: 0.9rem;">Completá tus datos para sumarte</p>
+        </div>
+
+        <form action="@Url.Action("GuardarRegistro", "Home")" method="post">
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <label class="form-label-custom">Nombre</label>
+                    <input type="text" name="Nombre" class="input-neon-custom" placeholder="Tu nombre" required />
+                </div>
+                <div class="col-6">
+                    <label class="form-label-custom">Apellido</label>
+                    <input type="text" name="Apellido" class="input-neon-custom" placeholder="Tu apellido" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label-custom">Nombre de Usuario</label>
+                <input type="text" name="NombreUsuario" class="input-neon-custom" placeholder="ej: JuanPerez" required />
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label-custom">Contraseña</label>
+                <input type="password" name="Contraseña" class="input-neon-custom" placeholder="••••••••" required />
+            </div>
+
+            <button type="submit" class="btn-gradient-green">Registrarse</button>
+        </form>
+
+        <div class="mt-4 text-center">
+            <p class="mb-0" style="color: #94a3b8; font-size: 0.9rem;">
+                ¿Ya tenés cuenta? 
+                <a href="@Url.Action("Loguearse", "Home")" class="login-link">Iniciá sesión acá</a>
+            </p>
+        </div>
+    </div>
+</div>
